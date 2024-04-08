@@ -1,0 +1,26 @@
+{
+  "name": "bind-knot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "tsc": "tsc",
+    "tsx": "tsx",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Ezio Lin",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@langchain/core": "^0.1.54",
+    "@langchain/openai": "^0.0.26",
+    "langchain": "^0.1.31"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.5",
+    "dotenv": "^16.4.5",
+    "tsx": "^4.7.2",
+    "typescript": "^5.4.4"
+  }
+}
