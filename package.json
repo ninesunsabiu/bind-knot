@@ -15,10 +15,16 @@
   "dependencies": {
     "@langchain/core": "^0.1.54",
     "@langchain/openai": "^0.0.26",
-    "langchain": "^0.1.31"
+    "fp-ts": "^2.16.5",
+    "langchain": "^0.1.31",
+    "ramda": "^0.29.1",
+    "rxjs": "^7.8.1",
+    "ts-pattern": "^5.1.1",
+    "wretch": "^2.8.1"
   },
   "devDependencies": {
     "@types/node": "^20.12.5",
+    "@types/ramda": "^0.29.12",
     "dotenv": "^16.4.5",
     "tsx": "^4.7.2",
     "typescript": "^5.4.4"
