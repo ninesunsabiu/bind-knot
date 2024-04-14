@@ -7,6 +7,12 @@ dependencies:
   '@langchain/openai':
     specifier: ^0.0.26
     version: 0.0.26
+  '@trpc/client':
+    specifier: 11.0.0-rc.340
+    version: 11.0.0-rc.340(@trpc/server@11.0.0-rc.340)
+  '@trpc/server':
+    specifier: 11.0.0-rc.340
+    version: 11.0.0-rc.340
   fp-ts:
     specifier: ^2.16.5
     version: 2.16.5
@@ -25,6 +31,9 @@ dependencies:
   wretch:
     specifier: ^2.8.1
     version: 2.8.1
+  zod:
+    specifier: ^3.22.4
+    version: 3.22.4
 
 devDependencies:
   '@types/node':
@@ -587,6 +596,18 @@ packages:
       zod-to-json-schema: 3.22.5(zod@3.22.4)
     transitivePeerDependencies:
       - encoding
+    dev: false
+
+  /@trpc/client@11.0.0-rc.340(@trpc/server@11.0.0-rc.340):
+    resolution: {integrity: sha512-q2ecZW58LM9pKpzRt+um9Jh33Nmjt7qDZu3xsjMFD61QLE6M/Tply7lC02iqZzrXzTGxR0w2+dLdkkrSlITOKQ==}
+    peerDependencies:
+      '@trpc/server': 11.0.0-rc.340+d1652d1bc
+    dependencies:
+      '@trpc/server': 11.0.0-rc.340
+    dev: false
+
+  /@trpc/server@11.0.0-rc.340:
+    resolution: {integrity: sha512-fKzFeAzFbsezC8Jx6gIy4AjlzNvQy4aFc2LT0qIq7hNWYCkuv3gQ7ROgcIF4dUI0rfPC3Gt/y8PQjE+GayAhvA==}
     dev: false
 
   /@types/node-fetch@2.6.11:
