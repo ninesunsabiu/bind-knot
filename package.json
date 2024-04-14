@@ -6,7 +6,7 @@
   "scripts": {
     "tsc": "tsc",
     "tsx": "tsx",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "vitest"
   },
   "keywords": [],
   "author": "Ezio Lin",
@@ -30,6 +30,7 @@
     "@types/ramda": "^0.29.12",
     "dotenv": "^16.4.5",
     "tsx": "^4.7.2",
-    "typescript": "^5.4.4"
+    "typescript": "^5.4.4",
+    "vitest": "^1.5.0"
   }
 }
