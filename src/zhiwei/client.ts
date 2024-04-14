@@ -30,7 +30,7 @@ export const ofClient = (options: ZhiweiClientOption) => {
             .pipe(RxOp.retry(3));
     };
 
-    return authFetcher().pipe(
+    const source$ = authFetcher().pipe(
         RxOp.map((cookie): ZhiweiClient => {
             const f = fetcher.headers({ Cookie: cookie, 'org-identity': orgIdentity }).catcher(401, (_, request) => {
                 return authFetcher().pipe(RxOp.map((cookie) => request.headers({ Cookie: cookie })));
@@ -41,4 +41,14 @@ export const ofClient = (options: ZhiweiClientOption) => {
             return { fetcher: f, orgId };
         })
     );
+
+    return Rx.firstValueFrom(source$);
 };
+
+export const defaultZhiweiClient = (() => {
+    return ofClient({
+        orgIdentity: process.env.ZHIWEI_ORG_IDENTITY,
+        password: process.env.ZHIWEI_PASSWORD,
+        username: process.env.ZHIWEI_USERNAME
+    });
+})();
