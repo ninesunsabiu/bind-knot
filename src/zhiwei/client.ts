@@ -22,7 +22,9 @@ export const ofClient = (options: ZhiweiClientOption) => {
         orgIdentity
     } = options;
 
-    const fetcher = wretch(baseUrl);
+    const fetcher = wretch(baseUrl).headers({
+        'org-identity': orgIdentity
+    });
 
     const authFetcher = () => {
         return Rx.defer(() => login(fetcher)(username, password))
@@ -32,7 +34,7 @@ export const ofClient = (options: ZhiweiClientOption) => {
 
     const source$ = authFetcher().pipe(
         RxOp.map((cookie): ZhiweiClient => {
-            const f = fetcher.headers({ Cookie: cookie, 'org-identity': orgIdentity }).catcher(401, (_, request) => {
+            const f = fetcher.headers({ Cookie: cookie }).catcher(401, (_, request) => {
                 return authFetcher().pipe(RxOp.map((cookie) => request.headers({ Cookie: cookie })));
             });
 
