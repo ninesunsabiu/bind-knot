@@ -1,4 +1,7 @@
+import * as Z from 'zod';
+import { ChatOpenAI } from "@langchain/openai";
 import { MemgraphGraph } from "@langchain/community/graphs/memgraph_graph";
+import { GraphCypherQAChain } from "langchain/chains/graph_qa/cypher";
 import { publicProcedure, router } from "../trpc.js";
 
 
@@ -30,5 +33,23 @@ RETURN p.position AS position,p.name AS name,p.title AS title,p.statusId AS stat
 });
 
 export const graphRouter = router({
-    test: queryInGraph
-})
+    test: queryInGraph,
+    ask: graphProcedure
+        .input(
+            Z.object({
+                message: Z.string()
+            })
+        )
+        .query((opt) => {
+            const message = opt.input.message;
+            const graph = opt.ctx.graph;
+
+            const llm = new ChatOpenAI({ temperature: 0, modelName: 'gpt-3.5-turbo-1106' });
+
+            const chain = GraphCypherQAChain.fromLLM({ llm, graph });
+
+            chain.verbose = true;
+
+            return chain.run(message);
+        })
+});
