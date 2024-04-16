@@ -10,4 +10,12 @@ declare namespace NodeJS {
         ZHIWEI_PASSWORD: string;
         ZHIWEI_ORG_IDENTITY: string;
     }
+
+    interface ProcessEnv {
+        
+        MEMGRAPH_URL: string;
+        MEMGRAPH_USER: string;
+        MEMGRAPH_PASSWORD: string;
+        MEMGRAPH_DATABASE?: string;
+    }
 }
