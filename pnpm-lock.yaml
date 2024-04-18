@@ -16,6 +16,9 @@ dependencies:
   '@trpc/server':
     specifier: 11.0.0-rc.340
     version: 11.0.0-rc.340
+  date-fns:
+    specifier: ^3.6.0
+    version: 3.6.0
   fp-ts:
     specifier: ^2.16.5
     version: 2.16.5
@@ -1188,6 +1191,10 @@ packages:
 
   /crypt@0.0.2:
     resolution: {integrity: sha512-mCxBlsHFYh9C+HVpiEacem8FEBnMXgU9gy4zmNC+SXAZNB/1idgp/aulFJ4FgCi7GPEVbfyng092GqL2k2rmow==}
+    dev: false
+
+  /date-fns@3.6.0:
+    resolution: {integrity: sha512-fRHTG8g/Gif+kSh50gaGEdToemgfj74aRX3swtiouboip5JDLAyDE9F11nHMIcvOaXeOC6D7SpNhi7uFyB7Uww==}
     dev: false
 
   /debug@4.3.4:
