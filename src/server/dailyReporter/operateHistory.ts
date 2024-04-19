@@ -20,7 +20,7 @@ export const getSomeoneOperateHistoryWithinYesterday = (client: ZhiweiClient, us
         acc: Awaited<ReturnType<ReturnType<typeof operateHistory>>>,
         curPage: number
     ): Promise<typeof acc> => {
-        return api(curPage, 'card').then((res) => {
+        return api({ page: curPage, keyword: userIdentity }, 'card').then((res) => {
             const result = res.filter((it) => pipe(new Date(it.createdAt), isWithinInterval(searchRange)));
             if (result.length === 0) {
                 return acc;

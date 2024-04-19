@@ -2,9 +2,9 @@ import * as Z from 'zod';
 import { ZhiweiClient } from '../client.js';
 
 export const operateHistory = (client: ZhiweiClient) => {
-    return (page: number, scope: 'card') => {
+    return (opt: { page: number, keyword?: string }, scope: 'card') => {
         return client.fetcher
-            .post({ orgId: client.orgId, scope, page, size: 60, keyWord: '' }, '/api/v1/opt-his/query')
+            .post({ orgId: client.orgId, scope, page: opt.page, size: 60, keyWord: opt.keyword ?? '' }, '/api/v1/opt-his/query')
             .json()
             .then((it) => {
                 return Z.object({
