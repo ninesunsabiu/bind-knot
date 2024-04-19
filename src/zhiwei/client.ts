@@ -1,7 +1,7 @@
 import * as R from 'ramda';
 import * as Rx from 'rxjs';
 import * as RxOp from 'rxjs/operators';
-import wretch, { Wretch } from "wretch"
+import wretch, { Wretch } from 'wretch';
 
 import { login } from './api/login.js';
 
@@ -10,9 +10,9 @@ export type ZhiweiClientOption = {
     username: string;
     password: string;
     orgIdentity: string;
-}
+};
 
-export type ZhiweiClient = { fetcher: Wretch, orgId: string };
+export type ZhiweiClient = { fetcher: Wretch; orgId: string };
 
 export const ofClient = (options: ZhiweiClientOption) => {
     const {
@@ -23,7 +23,8 @@ export const ofClient = (options: ZhiweiClientOption) => {
     } = options;
 
     const fetcher = wretch(baseUrl).headers({
-        'org-identity': orgIdentity
+        'org-identity': orgIdentity,
+        'Accept-Language': 'zh-CN'
     });
 
     const authFetcher = () => {
