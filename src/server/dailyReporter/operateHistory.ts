@@ -1,7 +1,7 @@
 import * as Id from 'fp-ts/Identity';
 import { pipe } from 'fp-ts/function';
 import { subDays, setHours, isWithinInterval } from 'date-fns/fp';
-import { ZhiweiClient, operateHistory } from '../../zhiwei/index.js';
+import { ZhiweiClient, operateHistory } from '~/zhiwei/index.js';
 
 export const getSomeoneOperateHistoryWithinYesterday = (client: ZhiweiClient, userIdentity: string) => {
     const api = operateHistory(client);
