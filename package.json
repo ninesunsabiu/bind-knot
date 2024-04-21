@@ -26,7 +26,8 @@
     "rxjs": "^7.8.1",
     "ts-pattern": "^5.1.1",
     "wretch": "^2.8.1",
-    "zod": "^3.22.4"
+    "zod": "^3.22.4",
+    "zod-to-json-schema": "^3.22.5"
   },
   "devDependencies": {
     "@types/node": "^20.12.5",
