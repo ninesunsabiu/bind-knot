@@ -35,9 +35,9 @@ export const fillDate = (start: string, end: string) => {
 };
 
 /**
- * 获得当前日期的前一个工作日时间
+ * 获得当前日期的到前一个工作日的日期范围
  */
-export const prevWorkDay = async (curDate: Date) => {
+export const prevWorkRange = async (curDate: Date) => {
     const prevDay = pipe(curDate, subDays(1), startOfDay);
 
     return wretch(url)
@@ -71,7 +71,7 @@ export const prevWorkDay = async (curDate: Date) => {
                 const ts = getUnixTime(cur);
                 // 调休日 或者 非周末的非假期
                 if (compDayMap.has(ts) || (!isWeekend(cur) && !holidayMap.has(ts))) {
-                    return cur;
+                    return { start: cur, end: prevDay };
                 } else {
                     cur = pipe(cur, subDays(1));
                     guard++;
