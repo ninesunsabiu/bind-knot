@@ -8,7 +8,9 @@ import {
     addDays,
     startOfDay,
     isWeekend,
-    getUnixTime
+    getUnixTime,
+    setHours,
+    setSeconds
 } from 'date-fns/fp';
 import { flow, pipe } from "fp-ts/function";
 import wretch from 'wretch';
@@ -71,7 +73,7 @@ export const prevWorkRange = async (curDate: Date) => {
                 const ts = getUnixTime(cur);
                 // 调休日 或者 非周末的非假期
                 if (compDayMap.has(ts) || (!isWeekend(cur) && !holidayMap.has(ts))) {
-                    return { start: cur, end: prevDay };
+                    return { start: cur, end: pipe(prevDay, setHours(23), setSeconds(59)) };
                 } else {
                     cur = pipe(cur, subDays(1));
                     guard++;
