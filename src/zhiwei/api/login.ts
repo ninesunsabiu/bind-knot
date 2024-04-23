@@ -1,4 +1,4 @@
-import { Wretch } from "wretch";
+import type { Wretch } from "wretch";
 
 export const login = (fetcher: Wretch) => {
     return (username: string, password: string) => {

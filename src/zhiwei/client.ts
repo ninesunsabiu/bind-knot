@@ -1,7 +1,7 @@
 import * as R from 'ramda';
 import * as Rx from 'rxjs';
 import * as RxOp from 'rxjs/operators';
-import wretch, { Wretch } from 'wretch';
+import wretch,  { type Wretch } from 'wretch';
 
 import { login } from './api/login.js';
 

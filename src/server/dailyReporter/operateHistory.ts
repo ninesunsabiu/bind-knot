@@ -1,6 +1,6 @@
 import { pipe } from 'fp-ts/function';
 import { isWithinInterval } from 'date-fns/fp';
-import { ZhiweiClient, operateHistory } from '~/zhiwei/index.js';
+import { type ZhiweiClient, operateHistory } from '~/zhiwei/index.js';
 import { prevWorkRange } from './chinaHoliday.js';
 
 export const getSomeoneOperateHistoryWithinYesterday = (client: ZhiweiClient, userIdentity: string) => {

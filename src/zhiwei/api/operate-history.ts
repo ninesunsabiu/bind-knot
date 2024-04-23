@@ -1,5 +1,5 @@
 import * as Z from 'zod';
-import { ZhiweiClient } from '../client.js';
+import type { ZhiweiClient } from '../client.js';
 
 export const operateHistory = (client: ZhiweiClient) => {
     return (opt: { page: number, keyword?: string }, scope: 'card') => {
