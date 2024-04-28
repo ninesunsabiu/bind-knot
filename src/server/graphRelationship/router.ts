@@ -7,11 +7,12 @@ import { publicProcedure, router } from "../trpc.js";
 
 const graphProcedure = publicProcedure.use(async (opt) => {
     try {
+        const env = opt.ctx.env
+
         const graph = await MemgraphGraph.initialize({
-            url: process.env.MEMGRAPH_URL,
-            username: process.env.MEMGRAPH_USER,
-            password: process.env.MEMGRAPH_PASSWORD,
-            database: process.env.MEMGRAPH_DATABASE
+            url: env.MEMGRAPH_URL,
+            username: env.MEMGRAPH_USER,
+            password: env.MEMGRAPH_PASSWORD
         });
         return opt.next({ ctx: { graph } });
     } catch (error) {

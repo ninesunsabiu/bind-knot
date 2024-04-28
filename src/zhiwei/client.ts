@@ -16,7 +16,7 @@ export type ZhiweiClient = { fetcher: Wretch; orgId: string };
 
 export const ofClient = (options: ZhiweiClientOption) => {
     const {
-        baseUrl = process.env.ZHIWEI_BASE_URL ?? 'https://tkb.agilean.cn',
+        baseUrl,
         username,
         password,
         orgIdentity
@@ -47,11 +47,3 @@ export const ofClient = (options: ZhiweiClientOption) => {
 
     return Rx.firstValueFrom(source$);
 };
-
-export const defaultZhiweiClient = (() => {
-    return ofClient({
-        orgIdentity: process.env.ZHIWEI_ORG_IDENTITY,
-        password: process.env.ZHIWEI_PASSWORD,
-        username: process.env.ZHIWEI_USERNAME
-    });
-})();

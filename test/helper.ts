@@ -2,12 +2,15 @@
 import 'dotenv/config';
 
 import { createCallerFactory, appRouter } from '../src/server/index.js';
-import { defaultZhiweiClient } from '../src/zhiwei/index.js';
+import { ofClient } from '../src/zhiwei/index.js';
 
 export const trpcCaller = createCallerFactory(appRouter)(async () => {
-    const zhiweiClient = await defaultZhiweiClient 
+    const env = process.env;
+    const zhiweiClient = await ofClient({
+        orgIdentity: env.ZHIWEI_ORG_IDENTITY,
+        password: env.ZHIWEI_PASSWORD,
+        username: env.ZHIWEI_USERNAME
+    }) 
 
-    return {
-        zhiweiClient
-    }
+    return { zhiweiClient, env }
 })
