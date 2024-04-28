@@ -6,7 +6,11 @@
   "scripts": {
     "tsc": "tsc",
     "tsx": "tsx",
-    "test": "vitest"
+    "test": "vitest",
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev",
+    "start": "wrangler dev",
+    "cf-typegen": "wrangler types"
   },
   "keywords": [],
   "author": "Ezio Lin",
@@ -35,6 +39,8 @@
     "dotenv": "^16.4.5",
     "tsx": "^4.7.2",
     "typescript": "^5.4.4",
-    "vitest": "^1.5.0"
+    "vitest": "^1.5.0",
+    "wrangler": "^3.52.0",
+    "@cloudflare/workers-types": "^4.20240423.0"
   }
 }
