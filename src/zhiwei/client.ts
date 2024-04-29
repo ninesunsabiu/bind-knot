@@ -24,7 +24,8 @@ export const ofClient = (options: ZhiweiClientOption) => {
 
     const fetcher = wretch(baseUrl).headers({
         'org-identity': orgIdentity,
-        'Accept-Language': 'zh-CN'
+        'Accept-Language': 'zh-CN',
+        "Accept": "application/json"
     });
 
     const authFetcher = () => {
