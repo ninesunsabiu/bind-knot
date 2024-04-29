@@ -3,6 +3,7 @@ import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { StructuredOutputParser } from "langchain/output_parsers";
 import { zodToJsonSchema } from "zod-to-json-schema";
 import { ChatOpenAI } from "@langchain/openai";
+import type { TRPCContext } from '../context.js';
 
 const systemPromptTpl = `\
 你是一个擅长总结工作内容的助理，善于从工作记录中总结出前一个工作日的工作内容。
@@ -48,8 +49,9 @@ export type CardOperateRecord = Z.infer<typeof schemaCardOperateRecord>;
 
 const jsonSchema = JSON.stringify(zodToJsonSchema(schemaCardOperateRecord, '工作记录'))
 
-export const askForLLM = async (cardOperateHistory: CardOperateRecord) => {
-    const model = new ChatOpenAI({ temperature: 0.8, modelName: 'gpt-3.5-turbo-1106' });
+export const askForLLM = (ctx: TRPCContext) => async (cardOperateHistory: CardOperateRecord) => {
+    const { OPENAI_API_KEY, OPENAI_BASE_URL } = ctx.env;
+    const model = new ChatOpenAI({ temperature: 0.8, modelName: 'gpt-3.5-turbo-1106', configuration: { apiKey: OPENAI_API_KEY, baseURL: OPENAI_BASE_URL } });
 
     const prompt = ChatPromptTemplate.fromMessages<Record<'schema' | 'history' | 'format_instructions', string>>([
         ['system', systemPromptTpl],

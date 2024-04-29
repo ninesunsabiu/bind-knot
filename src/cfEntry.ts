@@ -1,5 +1,24 @@
+import { fetchRequestHandler } from '@trpc/server/adapters/fetch';
+import { appRouter } from './server/router.js';
+import { ofClient } from './zhiwei/client.js';
+
 export default {
-	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-		return new Response('Hello World!');
-	},
+    async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+        return fetchRequestHandler({
+            endpoint: '/api',
+            req: request,
+            router: appRouter,
+            createContext: async () => {
+				return {
+					zhiweiClient: await ofClient({
+						orgIdentity: env.ZHIWEI_ORG_IDENTITY,
+						password: env.ZHIWEI_PASSWORD,
+						username: env.ZHIWEI_USERNAME,
+						baseUrl: env.ZHIWEI_BASE_URL
+					}),
+					env
+				}
+			}
+        });
+    }
 };

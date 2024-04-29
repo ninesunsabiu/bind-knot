@@ -17,6 +17,7 @@ export const dailyReporterRouter = router({
         .query((opt) => {
             const {
                 ctx: { zhiweiClient },
+                ctx,
                 input: { email: userIdentity }
             } = opt;
 
@@ -35,7 +36,7 @@ export const dailyReporterRouter = router({
                                 }
                                 return ret
                             },
-                            askForLLM
+                            askForLLM(ctx)
                         )
                     )
                 )
