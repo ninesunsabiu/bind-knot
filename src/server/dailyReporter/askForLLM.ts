@@ -51,7 +51,13 @@ const jsonSchema = JSON.stringify(zodToJsonSchema(schemaCardOperateRecord, 'å·¥ä
 
 export const askForLLM = (ctx: TRPCContext) => async (cardOperateHistory: CardOperateRecord) => {
     const { OPENAI_API_KEY, OPENAI_BASE_URL } = ctx.env;
-    const model = new ChatOpenAI({ temperature: 0.8, modelName: 'gpt-3.5-turbo-1106', configuration: { apiKey: OPENAI_API_KEY, baseURL: OPENAI_BASE_URL } });
+
+    const model = new ChatOpenAI({
+        temperature: 0.8,
+        modelName: 'gpt-3.5-turbo-1106',
+        openAIApiKey: OPENAI_API_KEY,
+        configuration: { baseURL: OPENAI_BASE_URL }
+    });
 
     const prompt = ChatPromptTemplate.fromMessages<Record<'schema' | 'history' | 'format_instructions', string>>([
         ['system', systemPromptTpl],
