@@ -10,7 +10,8 @@ import {
     isWeekend,
     getUnixTime,
     setHours,
-    setSeconds
+    setSeconds,
+    setMinutes
 } from 'date-fns/fp';
 import { flow, pipe } from "fp-ts/function";
 import wretch from 'wretch';
@@ -22,11 +23,11 @@ const schemaHoliday = Z.object({
     Years: Z.record(Z.array(Z.object({ StartDate: Z.string(), EndDate: Z.string(), CompDays: Z.array(Z.string()) })))
 });
 
-const parseFromHolidayApi = parse(new Date(), 'yyyy-MM-dd');
+const parseFromHolidayApi = () => parse(new Date(), 'yyyy-MM-dd');
 
 export const fillDate = (start: string, end: string) => {
-    const startDate = pipe(start, parseFromHolidayApi, startOfDay);
-    const endDate = parseFromHolidayApi(end);
+    const startDate = pipe(start, parseFromHolidayApi(), startOfDay);
+    const endDate = parseFromHolidayApi()(end);
 
     // 从 startDate 开始 按天 生成日期到 endDate
     const diff = differenceInCalendarDays(startDate, endDate) + 1;
@@ -54,7 +55,7 @@ export const prevWorkRange = async (curDate: Date) => {
             const holidayMap = new Set(holiday.flatMap((it) => fillDate(it.StartDate, it.EndDate)));
             // 调休日期填充到日历中
             const compDayMap = new Set(
-                holiday.flatMap((it) => pipe(it.CompDays, A.map(flow(parseFromHolidayApi, startOfDay, getUnixTime))))
+                holiday.flatMap((it) => pipe(it.CompDays, A.map(flow(parseFromHolidayApi(), startOfDay, getUnixTime))))
             );
             return { holidayMap, compDayMap };
         })
@@ -73,7 +74,7 @@ export const prevWorkRange = async (curDate: Date) => {
                 const ts = getUnixTime(cur);
                 // 调休日 或者 非周末的非假期
                 if (compDayMap.has(ts) || (!isWeekend(cur) && !holidayMap.has(ts))) {
-                    return { start: cur, end: pipe(prevDay, setHours(23), setSeconds(59)) };
+                    return { start: cur, end: pipe(prevDay, setHours(23), setMinutes(59), setSeconds(59)) };
                 } else {
                     cur = pipe(cur, subDays(1));
                     guard++;

@@ -6,7 +6,11 @@ import { prevWorkRange } from './chinaHoliday.js';
 export const getSomeoneOperateHistoryWithinYesterday = (client: ZhiweiClient, userIdentity: string) => {
     const api = operateHistory(client);
 
-    const searchRange = prevWorkRange(new Date());
+    const date = new Date();
+    const offset = date.getTimezoneOffset() / 60;
+    const dateForChinaStandardTime = new Date(date.getTime() + (8 + offset) * 60 * 60 * 1000);
+
+    const searchRange = prevWorkRange(dateForChinaStandardTime);
 
     // `operateHistory` 是滚动加载分页的，目前没有针对人的过滤 所以只有连续调用
     const searchRec = (
