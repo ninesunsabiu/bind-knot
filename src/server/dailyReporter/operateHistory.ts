@@ -6,11 +6,9 @@ import { prevWorkRange } from './chinaHoliday.js';
 export const getSomeoneOperateHistoryWithinYesterday = (client: ZhiweiClient, userIdentity: string) => {
     const api = operateHistory(client);
 
-    // 搜索范围 从当天 4 点反推到前一天 0 点
     const searchRange = prevWorkRange(new Date());
 
     // `operateHistory` 是滚动加载分页的，目前没有针对人的过滤 所以只有连续调用
-
     const searchRec = (
         start: Date,
         acc: Awaited<ReturnType<ReturnType<typeof operateHistory>>>,
