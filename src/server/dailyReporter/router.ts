@@ -30,13 +30,10 @@ export const dailyReporterRouter = router({
                         flow(
                             NEA.groupBy(it => it.sourceName),
                             (groups) => {
-                                const ret: CardOperateRecord = {}
-                                for (const [key, value] of Object.entries(groups)) {
-                                    ret[key] = value.map(it => it.content)
-                                }
-                                return ret
+                                return Object.entries(groups).map(([k, v]): CardOperateRecord[number] => ({ cardName: k, operations: v.map(it => it.content) }))
                             },
-                            askForLLM(ctx)
+                            askForLLM(ctx),
+                            it => it.then(it => it.detail)
                         )
                     )
                 )
