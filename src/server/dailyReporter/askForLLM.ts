@@ -6,22 +6,19 @@ import { ChatOpenAI } from "@langchain/openai";
 import type { TRPCContext } from '../context.js';
 
 const systemPromptTpl = `\
-你是一个擅长总结工作内容的助理，善于从工作记录中总结出工作内容。
+你是一个擅长总结工作内容的助理，我需要你帮我根据我在“知微系统”中的卡片操作记录进行分析总结，概括出这些操作的主要目的，最终形成一份工作日报
 
-工作记录，可以用 JSON Schema
+“知微系统”是一个模拟物理看板方法论的精益敏捷软件系统，系统上面抽象有：“价值流”、“卡片”、“关联关系” 等概念。
+你的任务就是帮我从“卡片”的操作历史中，概括总结出工作日报
 
-"JSON Schema" is a declarative language that allows you to annotate and validate JSON documents.
+“卡片”的主要操作有：
+- 移动卡片：在看板价值流中移动，在操作记录中体现为 “从「A」到「B」”。移动卡片主要的目的是产生价值
+- 修改属性：完善卡片的信息，包括更新描述、优先级、计划完成日期等
+- 变更关联关系：影响一张卡片如果联系到另外一张卡片。将卡片增加关联关系可以使得系统中的数据联系更加紧密。一次关联关系的变更通常会有两条记录
+  分别是操作卡和关联卡。
 
-For example, the example "JSON Schema" instance {{"properties": {{"foo": {{"description": "a list of test words", "type": "array", "items": {{"type": "string"}}}}}}, "required": ["foo"]}}}}
-would match an object with one required property, "foo". The "type" property specifies "foo" must be an "array", and the "description" property semantically describes it as "a list of test words". The items within "foo" must be strings.
-Thus, the object {{"foo": ["bar", "baz"]}} is a well-formatted instance of this example "JSON Schema". The object {{"properties": {{"foo": ["bar", "baz"]}}}} is not well-formatted.
 
-以下就是这次输入的工作项列表的 "JSON Schema" 
-\`\`\`json
-{schema}
-\`\`\`
-
-操作内容如果是：\`从「A」到「B」\`的话，代表了精益敏捷中卡片在价值流的移动，以下是几个常见的价值流的状态列
+“价值流”是一个类型的卡片按照价值产生方向流动的过程。以下是“知微系统”中常见的看板价值流和它对应的状态列 
 - 研发用户故事看板：「Story development-Complete story」、「Be deployed」、「Story development-Story research and development」、「Story development-Complete story」
 - 代码评审看板：「To be reviewed」、「Appraise」、「To be discussed」
 - 研发缺陷看板：「Discover」、「priority」、「Repair」、「Solve verification」
@@ -31,10 +28,16 @@ Thus, the object {{"foo": ["bar", "baz"]}} is a well-formatted instance of this 
 - 代码评审看板：对代码提交任务进行评审，对代码进行讨论评估，对有缺陷风险的移入讨论，对无问题的代码移动通过。用来对代码质量进行提升守护
 - 研发缺陷看板：跟踪处理研发过程中产生的缺陷问题，及时修复，及时验证。用于提升产品质量
 
+用户输入的卡片操作历史，可以用 JSON Schema 描述，以下是本次用户将会输入的卡片操作历史 "JSON Schema" 
+\`\`\`json
+{schema}
+\`\`\`
+
 以下是对你的要求：
-- 操作的卡片名称 如果是编号加人类名字组成的，则忽略这条。例如: \`#988-欧阳\`
-- 概括操作内容。使用连贯的语句，避免生搬硬套，推理分析操作背后的真实意图再输出，不可照搬输入
-- 总结的每一条，主语保持操作的卡片名称，例如 "#\`96488\`-\`富文本在有表格的情况下无法全选删除内容\`: 移动至优先并且指定\`晓明\`去处理该缺陷" 反引号中的都是示例代词，具体总结时替换为真实内容
+- 如果操作的卡片名称是编号加人类名字组成的，则略过这张卡片和它的操作记录，不进入总结
+- 高度概括操作内容。使用连贯的语句，不可以直接照搬输入
+- 总结的每一条，主语保持操作的卡片名称
+- 如果你认为一张卡的操作记录和代码评审看板相关，则将其概括成：“处理了代码评审”，并且整个总结最多只能有一条关于代码评审的项
 
 {format_instructions}
 `;
@@ -55,7 +58,7 @@ const schemaCardOperateRecord = Z.object({
 
 export type CardOperateRecord = Z.infer<typeof schemaCardOperateRecord>;
 
-const jsonSchema = JSON.stringify(zodToJsonSchema(schemaCardOperateRecord, '工作记录'))
+const jsonSchema = JSON.stringify(zodToJsonSchema(schemaCardOperateRecord, '卡片操作历史'))
 
 export const askForLLM = (ctx: TRPCContext) => async (cardOperateHistory: CardOperateRecord) => {
     const { OPENAI_API_KEY, OPENAI_BASE_URL } = ctx.env;
@@ -74,7 +77,7 @@ export const askForLLM = (ctx: TRPCContext) => async (cardOperateHistory: CardOp
 
     const outputParser = StructuredOutputParser.fromZodSchema(
         Z.object({
-            detail: Z.array(Z.string().describe('一般为体现 #+数字卡片编号开头的工作内容描述，例如 "#94409-前端配置项迁移: 完成了桌面检查并移交了测试"')).describe('工作详情'),
+            detail: Z.array(Z.string().describe('一般为体现 #+数字卡片编号开头的工作内容描述，可以允许一两个例外"')).describe('工作详情'),
             summary: Z.string().describe('工作总结 一句简单的话对工作详情的总体概括，不要出现太多主观的夸奖')
         })
     );
