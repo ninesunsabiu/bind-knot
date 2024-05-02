@@ -33,13 +33,13 @@
     "zod-to-json-schema": "^3.22.5"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240423.0",
     "@types/node": "^20.12.5",
     "@types/ramda": "^0.29.12",
     "dotenv": "^16.4.5",
     "tsx": "^4.7.2",
     "typescript": "^5.4.4",
     "vitest": "^1.5.0",
-    "wrangler": "^3.52.0",
-    "@cloudflare/workers-types": "^4.20240423.0"
+    "wrangler": "^3.53.0"
   }
 }
