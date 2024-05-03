@@ -8,7 +8,7 @@ export default {
             responseMeta: () => {
                 return {
                     headers: {
-                        'Access-Control-Allow-Origin': 'https://tkb.agilean.cn',
+                        'Access-Control-Allow-Origin': env.ZHIWEI_BASE_URL,
                         'Access-Control-Allow-Methods': 'GET,POST'
                     }
                 };
