@@ -1,7 +1,7 @@
 import path from "node:path";
 import { defineConfig } from 'vite';
 import solidPlugin from 'vite-plugin-solid';
-import monkey from 'vite-plugin-monkey';
+import monkey, { cdn } from 'vite-plugin-monkey';
 
 export default defineConfig({
   plugins: [
@@ -17,6 +17,11 @@ export default defineConfig({
         downloadURL: "https://update.greasyfork.org/scripts/407797/%E7%9F%A5%E5%BE%AE%E6%97%A5%E6%8A%A5%E5%A1%AB%E5%86%99.user.js",
         updateURL: "https://update.greasyfork.org/scripts/407797/%E7%9F%A5%E5%BE%AE%E6%97%A5%E6%8A%A5%E5%A1%AB%E5%86%99.meta.js"
       },
+      build: {
+        externalGlobals: [
+          ["ramda", cdn.jsdelivr('R', "dist/ramda.min.js")]
+        ]
+      } 
     }),
   ],
   resolve: {
