@@ -1,9 +1,11 @@
 import * as Z from 'zod';
-import { ChatPromptTemplate } from "@langchain/core/prompts";
-import { StructuredOutputParser } from "langchain/output_parsers";
-import { zodToJsonSchema } from "zod-to-json-schema";
-import { ChatOpenAI } from "@langchain/openai";
+import { ChatPromptTemplate, PromptTemplate } from '@langchain/core/prompts';
+import { StructuredOutputParser } from 'langchain/output_parsers';
+import { zodToJsonSchema } from 'zod-to-json-schema';
+import { ChatOpenAI } from '@langchain/openai';
 import type { TRPCContext } from '../context.js';
+import { RunnableMap, RunnableSequence } from '@langchain/core/runnables';
+import { StringOutputParser } from '@langchain/core/output_parsers';
 
 const systemPromptTpl = `\
 你是一个擅长总结工作内容的助理，我需要你帮我根据我在“知微系统”中的卡片操作记录进行分析总结，概括出这些操作的主要目的，最终形成一份工作日报
@@ -50,15 +52,14 @@ const cardOperateHistoryPromptTpl = `\
 \`\`\`
 `;
 
-
 const schemaCardOperateRecord = Z.object({
-    cardName: Z.string().describe("操作的卡片名称，由卡片编号和卡片名称组成"),
-    operations: Z.array(Z.string().describe("操作的内容")).describe("一张卡片所有的所有操作内容")
-}).array()
+    cardName: Z.string().describe('操作的卡片名称，由卡片编号和卡片名称组成'),
+    operations: Z.array(Z.string().describe('操作的内容')).describe('一张卡片所有的所有操作内容')
+}).array();
 
 export type CardOperateRecord = Z.infer<typeof schemaCardOperateRecord>;
 
-const jsonSchema = JSON.stringify(zodToJsonSchema(schemaCardOperateRecord, '卡片操作历史'))
+const jsonSchema = JSON.stringify(zodToJsonSchema(schemaCardOperateRecord, '卡片操作历史'));
 
 export const askForLLM = (ctx: TRPCContext) => async (cardOperateHistory: CardOperateRecord) => {
     const { OPENAI_API_KEY, OPENAI_BASE_URL } = ctx.env;
@@ -77,14 +78,34 @@ export const askForLLM = (ctx: TRPCContext) => async (cardOperateHistory: CardOp
 
     const outputParser = StructuredOutputParser.fromZodSchema(
         Z.object({
-            detail: Z.array(Z.string().describe('一般为体现 #+数字卡片编号开头的工作内容描述，可以允许一两个例外"')).describe('工作详情'),
+            detail: Z.array(
+                Z.string().describe('一般为体现 #+数字卡片编号开头的工作内容描述，可以允许一两个例外"')
+            ).describe('工作详情'),
             summary: Z.string().describe('工作总结 一句简单的话对工作详情的总体概括，不要出现太多主观的夸奖')
         })
     );
 
-    const chain = prompt.pipe(model).pipe(outputParser);
+    const chain = prompt.pipe(model).pipe(new StringOutputParser());
 
-    return await chain.invoke({
+    const workflow = RunnableSequence.from([
+        { daily: chain },
+        ChatPromptTemplate.fromMessages([
+            [
+                'system',
+                '你是一个经验丰富的文字工作者。现在用户输入的工作总结可能存在大量的代码评审工作，如果存在的话你需要将他们压缩成一条，如果不存在则不更改用户的输入'
+            ],
+            ['user', '这是我的工作日报总结: {daily}']
+        ]),
+        new ChatOpenAI({
+            temperature: 0.2,
+            modelName: 'gpt-4o',
+            openAIApiKey: OPENAI_API_KEY,
+            configuration: { baseURL: OPENAI_BASE_URL }
+        }),
+        outputParser
+    ]);
+
+    return await workflow.invoke({
         schema: jsonSchema,
         history: JSON.stringify(cardOperateHistory),
         format_instructions: outputParser.getFormatInstructions()
