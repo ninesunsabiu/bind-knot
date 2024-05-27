@@ -65,7 +65,7 @@ export const askForLLM = (ctx: TRPCContext) => async (cardOperateHistory: CardOp
 
     const model = new ChatOpenAI({
         temperature: 0.8,
-        modelName: 'gpt-3.5-turbo-1106',
+        modelName: 'gpt-4o',
         openAIApiKey: OPENAI_API_KEY,
         configuration: { baseURL: OPENAI_BASE_URL }
     });
